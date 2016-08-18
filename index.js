@@ -38,7 +38,7 @@ function lazyImg () {
 // LazyImg dom controller.
 function lazyExec (node, directive) {
   // @ node: HTML Element Object.
-  // @ directive: directives.bg or directives.src.
+  // @ directive: 'v-lazy' or 'v-lazy-bg'.
 
   // Size.
   const viewportHeight = window.innerHeight

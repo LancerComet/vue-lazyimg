@@ -5,14 +5,10 @@ A tiny and stable lazyload plugin for Vue.
 ```html
 <body>
   <!-- Load image and set to 'src'. -->
-  <img v-lazy="link-to-my-awesome-background.jpg">
+  <img v-lazy="image1">
 
   <!-- Load image and set to 'background-image'. -->
-  <div v-lazy-bg="link-to-my-awesome-background.jpg"></div>
-
-  <!-- Using it just like props. -->
-  <img :v-lazy="image1">
-  <div :v-lazy-bg="image2"></div>
+  <div v-lazy-bg="image2"></div>
 </body>
 ```
 

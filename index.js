@@ -2,8 +2,6 @@
  *  LazyImg for lazying loading images by using Vue.
  *  By LancerComet at 22:07, 2016.08.18.
  *  # Carry Your World #
- *  ---
- *  MIT License.
  */
 
 // Module Configuration.

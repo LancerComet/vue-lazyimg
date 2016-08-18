@@ -5,11 +5,11 @@
  */
 
 // Module Configuration.
-const directives = ['v-lazy-bg', 'v-lazy']
+var directives = ['v-lazy-bg', 'v-lazy']
 var inited = false
 
-export default {
-  install (Vue, options) {
+module.exports = {
+  install: function (Vue, options) {
     if (inited) return
     document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init)
   }
@@ -21,8 +21,8 @@ function init () {
    lazyImg()
 
    // Execute when scrolling.
-   const events = ['resize', 'scroll']
-   events.forEach(event => window.addEventListener(event, throttle(lazyImg, 200)))
+   var events = ['resize', 'scroll']
+   events.forEach(function (event) { window.addEventListener(event, throttle(lazyImg, 200)) })
 
    inited = true
 }
@@ -30,9 +30,9 @@ function init () {
 // Main function of LazyImg.
 function lazyImg () {
   // Get all nodes that are needed to be lazyed.
-  directives.forEach(directive => {
-    const nodes = getDoms(document.querySelectorAll('[' + directive + ']'))
-    nodes.forEach(node => lazyExec(node, directive))
+  directives.forEach(function (directive) {
+    var nodes = getDoms(document.querySelectorAll('[' + directive + ']'))
+    nodes.forEach(function (node) { lazyExec(node, directive) })
   })
 
 }
@@ -43,13 +43,13 @@ function lazyExec (node, directive) {
   // @ directive: 'v-lazy' or 'v-lazy-bg'.
 
   // Size.
-  const viewportHeight = window.innerHeight
-  const scrollTop = document.body.scrollTop
+  var viewportHeight = window.innerHeight
+  var scrollTop = document.body.scrollTop
 
   // Check and see the position of this node.
   // Attach image link or not.
   if (scrollTop + viewportHeight - node.offsetTop > 0 && node.hasAttribute(directive)) {
-    const imgLink = node.attributes[directive].value
+    var imgLink = node.attributes[directive].value
     switch (directive) {
       case directives[0]:
         node.style.backgroundImage = 'url(' + imgLink + ')'

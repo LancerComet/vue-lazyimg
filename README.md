@@ -31,8 +31,5 @@ const Root = new Vue({
 })
 ```
 
-## Something you may know ...
-It is written in ES2015, maybe you would like to check something like [Babel](https://babeljs.io/).
-
 ## License.
 © 2016 LancerComet. MIT License.

@@ -5,33 +5,43 @@
  */
 
 // Module Configuration.
-var directives = ['v-lazy-bg', 'v-lazy']
-var inited = false
+var directives = ['lazy-bg', 'lazy']  // LazyImg Directives.
+var srcDirective = 'lazy-src'  // Attributes for storing image link.
+var inited = false  // Initialization Flag.
 
 module.exports = {
   install: function (Vue, options) {
     if (inited) return
-    document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init)
+
+    // Setup Directives.
+    directives.forEach(function (directive) {
+      Vue.directive(directive, {
+        update: function (newVal) {
+          var node = this.el
+          node.setAttribute(srcDirective, newVal)
+          Vue.nextTick(function () { lazyExec(node, directive) })
+        }
+      })
+    })
+
+    // Setup scrolling events.
+    setEvents()
+    inited = true
   }
 }
 
-// Initilization.
-function init () {
-   // Start lazyInit for once.
-   lazyImg()
-
-   // Execute when scrolling.
-   var events = ['resize', 'scroll']
-   events.forEach(function (event) { window.addEventListener(event, throttle(lazyImg, 200)) })
-
-   inited = true
+// Set scrolling events.
+function setEvents () {
+  // Execute when scrolling.
+  var events = ['resize', 'scroll']
+  events.forEach(function (event) { window.addEventListener(event, throttle(lazyImg, 200)) })
 }
 
 // Main function of LazyImg.
 function lazyImg () {
   // Get all nodes that are needed to be lazyed.
   directives.forEach(function (directive) {
-    var nodes = getDoms(document.querySelectorAll('[' + directive + ']'))
+    var nodes = getDoms(document.querySelectorAll('[' + srcDirective + ']'))
     nodes.forEach(function (node) { lazyExec(node, directive) })
   })
 
@@ -40,7 +50,7 @@ function lazyImg () {
 // LazyImg dom controller.
 function lazyExec (node, directive) {
   // @ node: HTML Element Object.
-  // @ directive: 'v-lazy' or 'v-lazy-bg'.
+  // @ directive: 'lazy' or 'lazy-bg'.
 
   // Size.
   var viewportHeight = window.innerHeight
@@ -48,8 +58,8 @@ function lazyExec (node, directive) {
 
   // Check and see the position of this node.
   // Attach image link or not.
-  if (scrollTop + viewportHeight - node.offsetTop > 0 && node.hasAttribute(directive)) {
-    var imgLink = node.attributes[directive].value
+  if (scrollTop + viewportHeight - getTop(node) > 0 && node.hasAttribute(srcDirective)) {
+    var imgLink = node.attributes[srcDirective].value
     switch (directive) {
       case directives[0]:
         node.style.backgroundImage = 'url(' + imgLink + ')'
@@ -58,13 +68,20 @@ function lazyExec (node, directive) {
         node.src = imgLink
         break  
     }
-    node.removeAttribute(directive)
+    node.removeAttribute(srcDirective)
   }
 }
 
 // Transform DOM Collection to Array.
 function getDoms (doms) {
   return Array.prototype.slice.call(doms)
+}
+
+// Get an element's absolute offset top position.
+function getTop (element) {
+    var offset = element.offsetTop
+    if (element.offsetParent !== null) offset += getTop(element.offsetParent)
+    return offset
 }
 
 // Throttle function.
@@ -75,7 +92,7 @@ function throttle (func, wait, options) {
     var timeout = null;
     var previous = 0;
     if (!options) options = {};
-    var later = function() {
+    var later = function () {
         previous = options.leading === false ? 0 : Date.now();
         timeout = null;
         result = func.apply(context, args);

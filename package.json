@@ -1,0 +1,12 @@
+{
+  "name": "vue-lazyimg",
+  "version": "0.1.0",
+  "description": "An tiny and stable lazyload plugin for Vue.",
+  "main": "index.js",
+  "keywords": ["lazy", "load", "image", "vue"],
+  "author": {
+    "name": "LancerComet",
+    "email": "chw644@hotmail.com"
+  },
+  "license": "MIT"
+}

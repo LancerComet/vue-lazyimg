@@ -1,4 +1,4 @@
-# LazyImg
+# Vue-LazyImg
 A tiny and stable lazyload plugin for Vue.
 
 ## Introduction.

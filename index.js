@@ -6,7 +6,6 @@
 
 // Module Configuration.
 var directives = ['lazy-bg', 'lazy']  // LazyImg Directives.
-var srcDirective = 'lazy-src'  // Attributes for storing image link.
 var inited = false  // Initialization Flag.
 
 module.exports = {
@@ -18,7 +17,7 @@ module.exports = {
       Vue.directive(directive, {
         update: function (newVal) {
           var node = this.el
-          node.setAttribute(srcDirective, newVal)
+          node.setAttribute(directive, newVal)
           Vue.nextTick(function () { lazyExec(node, directive) })
         }
       })
@@ -41,7 +40,7 @@ function setEvents () {
 function lazyImg () {
   // Get all nodes that are needed to be lazyed.
   directives.forEach(function (directive) {
-    var nodes = getDoms(document.querySelectorAll('[' + srcDirective + ']'))
+    var nodes = getDoms(document.querySelectorAll('[' + directive + ']'))
     nodes.forEach(function (node) { lazyExec(node, directive) })
   })
 
@@ -54,12 +53,12 @@ function lazyExec (node, directive) {
 
   // Size.
   var viewportHeight = window.innerHeight
-  var scrollTop = document.body.scrollTop
+  var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
 
   // Check and see the position of this node.
   // Attach image link or not.
-  if (scrollTop + viewportHeight - getTop(node) > 0 && node.hasAttribute(srcDirective)) {
-    var imgLink = node.attributes[srcDirective].value
+  if (scrollTop + viewportHeight - getTop(node) > 0 && node.hasAttribute(directive)) {
+    var imgLink = node.attributes[directive].value
     switch (directive) {
       case directives[0]:
         node.style.backgroundImage = 'url(' + imgLink + ')'
@@ -68,7 +67,7 @@ function lazyExec (node, directive) {
         node.src = imgLink
         break  
     }
-    node.removeAttribute(srcDirective)
+    node.removeAttribute(directive)
   }
 }
 

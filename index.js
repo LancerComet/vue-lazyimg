@@ -6,9 +6,11 @@
 
 // Module Configuration.
 const directives = ['v-lazy-bg', 'v-lazy']
+var inited = false
 
 export default {
   install (Vue, options) {
+    if (inited) return
     document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init)
   }
 }
@@ -21,6 +23,8 @@ function init () {
    // Execute when scrolling.
    const events = ['resize', 'scroll']
    events.forEach(event => window.addEventListener(event, throttle(lazyImg, 200)))
+
+   inited = true
 }
 
 // Main function of LazyImg.

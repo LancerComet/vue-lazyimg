@@ -7,6 +7,7 @@
 // Module Configuration.
 var directives = ['lazy-bg', 'lazy']  // LazyImg Directives.
 var inited = false  // Initialization Flag.
+var unavailableSrc = ['false', 'undefined', 'null', '']  // Src values that unavailable.
 
 module.exports = {
   install: function (Vue, options) {
@@ -33,7 +34,7 @@ module.exports = {
 function setEvents () {
   // Execute when scrolling.
   var events = ['resize', 'scroll']
-  events.forEach(function (event) { window.addEventListener(event, throttle(lazyImg, 200)) })
+  events.forEach(function (event) { window.addEventListener(event, throttle(lazyImg, 100)) })
 }
 
 // Main function of LazyImg.
@@ -59,6 +60,10 @@ function lazyExec (node, directive) {
   // Attach image link or not.
   if (scrollTop + viewportHeight - getTop(node) > 0 && node.hasAttribute(directive)) {
     var imgLink = node.attributes[directive].value
+
+    // If unavailable src was given, just go return.
+    if (unavailableSrc.filter(function (value) { return imgLink === value }).length) { return }
+
     switch (directive) {
       case directives[0]:
         node.style.backgroundImage = 'url(' + imgLink + ')'

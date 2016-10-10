@@ -34,7 +34,13 @@ module.exports = {
 function setEvents () {
   // Execute when scrolling.
   var events = ['resize', 'scroll']
-  events.forEach(function (event) { window.addEventListener(event, throttle(lazyImg, 100)) })
+  events.forEach(function (event) {
+    var timeout = null
+    window.addEventListener(event, function () {
+      clearTimeout(timeout)
+      timeout = setTimeout(lazyImg, 250)
+    })
+  })
 }
 
 // Main function of LazyImg.
@@ -66,7 +72,9 @@ function lazyExec (node, directive) {
 
     switch (directive) {
       case directives[0]:
-        node.style.backgroundImage = 'url(' + imgLink + ')'
+        setTimeout(function() {
+          node.style.backgroundImage = 'url(' + imgLink + ')'
+        }, Math.floor(Math.random() * 100))
         break
       case directives[1]:
         node.src = imgLink
@@ -86,39 +94,4 @@ function getTop (element) {
     var offset = element.offsetTop
     if (element.offsetParent !== null) offset += getTop(element.offsetParent)
     return offset
-}
-
-// Throttle function.
-// Underscore (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors.
-// Underscore may be freely distributed under the MIT license.
-function throttle (func, wait, options) {
-    var context, args, result;
-    var timeout = null;
-    var previous = 0;
-    if (!options) options = {};
-    var later = function () {
-        previous = options.leading === false ? 0 : Date.now();
-        timeout = null;
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
-    };
-    return function () {
-        var now = Date.now();
-        if (!previous && options.leading === false) previous = now;
-        var remaining = wait - (now - previous);
-        context = this;
-        args = arguments;
-        if (remaining <= 0 || remaining > wait) {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-            previous = now;
-            result = func.apply(context, args);
-            if (!timeout) context = args = null;
-        } else if (!timeout && options.trailing !== false) {
-            timeout = setTimeout(later, remaining);
-        }
-        return result;
-    };
 }

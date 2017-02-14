@@ -16,12 +16,15 @@ module.exports = {
     // Setup Directives.
     directives.forEach(function (directive) {
       Vue.directive(directive, {
-        update: function (newVal) {
-          var node = this.el
-          node.setAttribute(directive, newVal)
-          Vue.nextTick(function () { lazyExec(node, directive) })
-        }
+        bind: exec,
+        componentUpdated: exec
       })
+
+      function exec (el, binding) {
+        var value = binding.value
+        el.setAttribute(directive, value)
+        Vue.nextTick(function () { lazyExec(el, directive) })
+      }
     })
 
     // Setup scrolling events.
@@ -50,7 +53,6 @@ function lazyImg () {
     var nodes = getDoms(document.querySelectorAll('[' + directive + ']'))
     nodes.forEach(function (node) { lazyExec(node, directive) })
   })
-
 }
 
 // LazyImg dom controller.

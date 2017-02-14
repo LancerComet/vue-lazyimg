@@ -1,6 +1,10 @@
 # Vue-LazyImg
 A tiny and stable lazyload plugin for Vue.
 
+For Vue 1.x, please use `npm install vue-lazyimg^0.1.0` to install vue-lazyimg.
+
+For Vue 2.x, use `npm install vue-lazying`.
+
 ## Introduction.
 ```html
 <body>

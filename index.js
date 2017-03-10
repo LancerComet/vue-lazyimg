@@ -20,6 +20,7 @@ module.exports = {
         componentUpdated: exec
       })
 
+      // Hook to bind and componentUpdated.
       function exec (el, binding) {
         var value = binding.value
         el.setAttribute(directive, value)
@@ -41,7 +42,7 @@ function setEvents () {
     var timeout = null
     window.addEventListener(event, function () {
       clearTimeout(timeout)
-      timeout = setTimeout(lazyImg, 250)
+      timeout = setTimeout(lazyImg, 150)
     })
   })
 }
@@ -57,16 +58,16 @@ function lazyImg () {
 
 // LazyImg dom controller.
 function lazyExec (node, directive) {
-  // @ node: HTML Element Object.
-  // @ directive: 'lazy' or 'lazy-bg'.
+  // node: HTML Element Object.
+  // directive: 'lazy' or 'lazy-bg'.
 
   // Size.
   var viewportHeight = window.innerHeight
-  var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+  var top = node.getBoundingClientRect().top
 
   // Check and see the position of this node.
   // Attach image link or not.
-  if (scrollTop + viewportHeight - getTop(node) > 0 && node.hasAttribute(directive)) {
+  if (Math.abs(top) < viewportHeight * 0.95) {
     var imgLink = node.attributes[directive].value
 
     // If unavailable src was given, just go return.
@@ -78,10 +79,12 @@ function lazyExec (node, directive) {
           node.style.backgroundImage = 'url(' + imgLink + ')'
         }, Math.floor(Math.random() * 100))
         break
+
       case directives[1]:
         node.src = imgLink
         break  
     }
+
     node.removeAttribute(directive)
   }
 }
@@ -89,11 +92,4 @@ function lazyExec (node, directive) {
 // Transform DOM Collection to Array.
 function getDoms (doms) {
   return Array.prototype.slice.call(doms)
-}
-
-// Get an element's absolute offset top position.
-function getTop (element) {
-    var offset = element.offsetTop
-    if (element.offsetParent !== null) offset += getTop(element.offsetParent)
-    return offset
 }

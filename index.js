@@ -9,6 +9,12 @@ var directives = ['lazy-bg', 'lazy']  // LazyImg Directives.
 var inited = false  // Initialization Flag.
 var unavailableSrc = ['false', 'undefined', 'null', '']  // Src values that unavailable.
 
+// Nodes collection with cache.
+var nodesCache = {
+  lazy: [],
+  'lazy-bg': []
+}
+
 module.exports = {
   install: function (Vue, options) {
     if (inited) return
@@ -25,6 +31,7 @@ module.exports = {
         var value = binding.value
         el.setAttribute(directive, value)
         Vue.nextTick(function () { lazyExec(el, directive) })
+        nodesCache[directive].push(el)
       }
     })
 
@@ -39,11 +46,7 @@ function setEvents () {
   // Execute when scrolling.
   var events = ['resize', 'scroll']
   events.forEach(function (event) {
-    var timeout = null
-    window.addEventListener(event, function () {
-      clearTimeout(timeout)
-      timeout = setTimeout(lazyImg, 150)
-    })
+    window.addEventListener(event, lazyImg)
   })
 }
 
@@ -51,8 +54,7 @@ function setEvents () {
 function lazyImg () {
   // Get all nodes that are needed to be lazyed.
   directives.forEach(function (directive) {
-    var nodes = getDoms(document.querySelectorAll('[' + directive + ']'))
-    nodes.forEach(function (node) { lazyExec(node, directive) })
+    nodesCache[directive].forEach(function (node) { lazyExec(node, directive) })
   })
 }
 
@@ -60,6 +62,7 @@ function lazyImg () {
 function lazyExec (node, directive) {
   // node: HTML Element Object.
   // directive: 'lazy' or 'lazy-bg'.
+  if (!node.hasAttribute(directive)) { return }
 
   // Size.
   var viewportHeight = window.innerHeight
